@@ -9,7 +9,7 @@
         triggerExit(e){ if(e.clientY<50){ this.leadModal=true; window.removeEventListener('mousemove', this.triggerExit); }}
       }"
       @scroll.window="const y=window.pageYOffset; showMobileCTA = y<80 || y<lastScroll; lastScroll=y;"
-      x-init="window.addEventListener('mousemove', triggerExit)">
+      @mousemove.window="triggerExit">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,7 +17,8 @@
   <meta name="description" content="AI‑powered bookkeeping for commercial real estate. Close month‑end in 10 days at 70% of market cost." />
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine -->
+  <!-- Alpine (with Collapse plugin) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- Calendly -->
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
