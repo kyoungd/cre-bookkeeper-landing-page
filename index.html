@@ -7,18 +7,17 @@
         lastScroll:0,
         openCalendly(url){Calendly.initPopupWidget({url}); plausible && plausible('demo_scheduled');},
         triggerExit(e){
-          // Exit intent: desktop only; top 5% & left 15% of viewport
-          if (!matchMedia('(pointer:fine)').matches) return;
-          const topThreshold = window.innerHeight * 0.05;   // 5% height
-          const leftThreshold = window.innerWidth * 0.15;   // 15% width
-          if (e.clientY < topThreshold && e.clientX < leftThreshold) {
-            this.leadModal = true;
-            window.removeEventListener('mousemove', this.triggerExit);
+          // Exit intent: desktop only; top 5% Y & left 15% X
+          if(!matchMedia('(pointer:fine)').matches) return;
+          const top=window.innerHeight*0.05;
+          const left=window.innerWidth*0.15;
+          if(e.clientY < top && e.clientX < left){
+            this.leadModal=true;
+            window.removeEventListener('mousemove',this.triggerExit);
           }
         }
       }"
-      @scroll.window="const y=window.pageYOffset; showMobileCTA = y<80 || y<lastScroll; lastScroll=y;"
-      @mousemove.window="triggerExit">="const y=window.pageYOffset; showMobileCTA = y<80 || y<lastScroll; lastScroll=y;"
+      @scroll.window="const y = window.pageYOffset; showMobileCTA = y < 80 || y < lastScroll; lastScroll = y;"
       @mousemove.window="triggerExit">
 <head>
   <meta charset="UTF-8" />
