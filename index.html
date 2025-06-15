@@ -32,7 +32,51 @@
   <!-- Calendly -->
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
   <script async src="https://assets.calendly.com/assets/external/widget.js"></script>
-  <style>body{background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);} [x-cloak]{display:none!important;}</style>
+  <style>
+    body{background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);} [x-cloak]{display:none!important;}
+    .glass{background:rgba(255,255,255,0.4);backdrop-filter:blur(8px)}
+  </style>
+  <!-- KPI Dashboard component (demo data hard‑coded) -->
+  <script>
+    function dashboardApp(){
+      return {
+        selected:null,
+        tiles:['snapshot','workflow','liquidity','revenue_expense','tenant_lease','compliance','automation','placeholder'],
+        labels:{
+          snapshot:'Snapshot',
+          workflow:'Workflow',
+          liquidity:'Liquidity',
+          revenue_expense:'Revenue & Expense',
+          tenant_lease:'Tenant & Lease',
+          compliance:'Compliance',
+          automation:'Automation',
+          placeholder:'Upcoming'
+        },
+        groups:{
+          snapshot:{'NOI YTD':1350000,'NOI MTD':112000,'Occupancy Physical %':95.6,'Occupancy Economic %':93.1,'DSCR TTM':1.32,'Cash On Hand % of Min':143},
+          workflow:{'Pending Approvals (#)':3,'Pending Approvals ($)':9800,'Unmatched Cash Lines':6,'Tax Escrow % of Target':102,'CAM True‑ups Due':1,'High Severity Alerts':0},
+          liquidity:{'Operating Balance':415000,'Tax Escrow Balance':168000,'Insurance Escrow Balance':42000,'Avg Draw Queue Days':38},
+          revenue_expense:{'Rent Collected %':98.2,'CAM Leakage %':1.4,'Expense Variance %':2.7,'CapEx % of Plan':87},
+          tenant_lease:{'Top 10 NOI %':38,'RSF Expiring 24mo %':18,'Delinquency >30d %':1.1},
+          compliance:{'Bank Recs On Time %':100,'Lender Pack Days Late':0,'Close Progress %':88},
+          automation:{'Auto‑Processed %':74,'Manual Hrs Saved MoM %':6.3}
+        },
+        // helpers
+        summary(tile){
+          if(tile==='placeholder') return '…';
+          const firstKey = Object.keys(this.groups[tile])[0];
+          return this.format(this.groups[tile][firstKey]);
+        },
+        format(val){
+          if(typeof val==='number'){
+            if(val>1000) return Intl.NumberFormat('en-US',{notation:'compact'}).format(val);
+            return val;
+          }
+          return val;
+        }
+      }
+    }
+  </script>
 </head>
 <body class="font-sans text-slate-800 antialiased relative">
   <!-- Sticky CTA (mobile) -->
@@ -41,7 +85,7 @@
   </template>
 
   <!-- Top nav -->
-  <header class="fixed w-full bg-white shadow-sm z-40">
+  <header class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-40">
     <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
       <a href="#" class="font-extrabold text-indigo-700 text-lg">crebookkeeper.ai</a>
       <button @click="mobileNav=!mobileNav" class="md:hidden focus:outline-none">
@@ -68,7 +112,7 @@
   <div class="h-16"></div>
 
   <!-- HERO -->
-  <section class="max-w-7xl mx-auto px-6 pt-16 pb-32 grid md:grid-cols-2 gap-10 items-center">
+  <section class="max-w-7xl mx-auto px-6 pt-16 pb-32 grid md:grid-cols-2 gap-12 items-center">
     <div>
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Close in 10 Days—Every Month</h1>
       <p class="text-lg md:text-xl mb-6 text-slate-600">AI‑powered bookkeeping at <span class="font-semibold">70% of market cost</span>.</p>
@@ -82,8 +126,30 @@
       </div>
     </div>
     <div class="relative">
-      <div class="aspect-[4/3] w-full rounded-xl shadow-lg ring-1 ring-slate-200 overflow-hidden bg-white flex items-center justify-center">
-        <span class="text-slate-400">[Dashboard wireframe]</span>
+      <div class="aspect-[4/3] w-full rounded-2xl shadow-lg ring-1 ring-slate-200 overflow-hidden bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4">
+        <!-- KPI Dashboard Wireframe -->
+        <div x-data="dashboardApp()" class="w-full h-full" @keydown.escape.window="selected=null">
+          <div class="grid grid-cols-4 grid-rows-2 gap-4 w-full h-full">
+            <template x-for="tile in tiles" :key="tile">
+              <button @click="tile!=='placeholder' ? selected=tile : null" :class="tile==='placeholder' ? 'bg-white/40 border border-green-200 text-green-700' : 'bg-white glass hover:bg-white/70 shadow-sm text-green-900'" class="font-semibold flex flex-col items-center justify-center rounded-xl text-center px-2 py-3 focus:outline-none transition-transform hover:-translate-y-1">
+                <span class="text-sm md:text-base" x-text="labels[tile]"></span>
+                <span class="text-lg md:text-xl font-bold mt-1" x-text="summary(tile)"></span>
+              </button>
+            </template>
+          </div>
+          <!-- Modal -->
+          <div x-show="selected" x-transition.opacity x-cloak class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div @click.away="selected=null" class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 relative shadow-xl">
+              <h3 class="text-2xl font-bold text-green-700 flex items-center gap-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2a10 10 0 100 20 10 10 0 000-20z'/></svg><span x-text="labels[selected]"></span></h3>
+              <ul class="divide-y divide-slate-200 max-h-[60vh] overflow-y-auto pr-2">
+                <template x-for="(value,key) in groups[selected]" :key="key">
+                  <li class="py-3 flex justify-between text-sm sm:text-base"><span class="text-slate-600" x-text="key"></span><span class="font-semibold text-slate-900" x-text="format(value)"></span></li>
+                </template>
+              </ul>
+              <button @click="selected=null" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -192,6 +258,7 @@
       <form action="https://your-esp-endpoint" method="POST" class="space-y-4" @submit.once="plausible && plausible('leadmagnet_optin')">
         <input type="hidden" name="tag" value="lead_magnet">
         <input type="email" name="email" required placeholder="Work email" autocomplete="email" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none">
+        <p class="text-xs text-slate-500 mt-1 text-center">We will never share your information with anyone.</p>
         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg w-full">Send me the PDF →</button>
       </form>
       <button class="absolute top-2 right-2 text-slate-400" @click="leadModal=false">✕</button>
