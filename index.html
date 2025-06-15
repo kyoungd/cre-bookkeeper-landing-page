@@ -1,176 +1,165 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth"
+      x-data="{
+        mobileNav:false,
+        leadModal:false,
+        showMobileCTA:true,
+        lastScroll:0,
+        openCalendly(url){Calendly.initPopupWidget({url}); plausible && plausible('demo_scheduled');},
+        triggerExit(e){ if(e.clientY<50){ this.leadModal=true; window.removeEventListener('mousemove', this.triggerExit); }}
+      }"
+      @scroll.window="const y=window.pageYOffset; showMobileCTA = y<80 || y<lastScroll; lastScroll=y;"
+      x-init="window.addEventListener('mousemove', triggerExit)">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRE Bookkeeper – AI‑Powered Bookkeeping for Commercial Real‑Estate Owners</title>
-  <meta name="description" content="Close books by Day+10, slash costs 30%, and see live NOI & occupancy in one dashboard. CRE‑specialised bookkeeping backed by AI and U.S. professionals."/>
-  <meta property="og:title" content="CRE Bookkeeper – Bookkeeping Built for Buildings" />
-  <meta property="og:description" content="AI‑powered bookkeeping for commercial real‑estate. Founding‑client discount now open." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://crebookkeeper.ai" />
-  <meta property="og:image" content="/og-image.png" />
-
-  <!-- Tailwind (CDN build) -->
+  <title>crebookkeeper.ai – Close in 10 Days | CRE Bookkeeper</title>
+  <meta name="description" content="AI‑powered bookkeeping for commercial real estate. Close month‑end in 10 days at 70% of market cost." />
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine.js -->
+  <!-- Alpine -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- Calendly widget -->
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  <!-- Calendly -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
   <script async src="https://assets.calendly.com/assets/external/widget.js"></script>
-
-  <style>
-    body { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); }
-  </style>
+  <style>body{background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);} [x-cloak]{display:none!important;}</style>
 </head>
-<body class="font-sans text-slate-800 antialiased">
+<body class="font-sans text-slate-800 antialiased relative">
   <!-- Sticky CTA (mobile) -->
-  <a href="#demo" class="md:hidden fixed inset-x-0 bottom-0 z-50 text-center bg-indigo-600 text-white py-3 font-semibold">Book a 15‑Min Demo →</a>
+  <template x-if="showMobileCTA">
+    <a href="#demo" class="fixed inset-x-0 bottom-0 z-50 md:hidden block text-center bg-indigo-600 text-white py-3 font-semibold">Schedule a 15‑min demo →</a>
+  </template>
 
-  <!-- Site‑wide notification bar -->
-  <div class="bg-amber-500 text-white text-sm py-2 text-center px-4">
-    🚀 Founding‑client Early Access — 40% off for the first 3 months (limited to 12 properties)
-  </div>
-
-  <!-- Header with simple nav -->
-  <header class="max-w-7xl mx-auto px-6 pt-16 md:pt-24 pb-32 grid md:grid-cols-2 gap-10 items-center">
-    <div>
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-5 leading-tight">
-        Bookkeeping <span class="text-indigo-600">Built for Buildings</span>
-      </h1>
-      <p class="text-lg md:text-xl mb-6 text-slate-600">
-        Close faster. See clearer. Pay less.<br>
-        AI‑powered bookkeeping engineered for CRE.
-      </p>
-
-      <!-- Key proof points -->
-      <ul class="space-y-3 mb-8 text-slate-700">
-        <li class="flex items-start"><span class="mr-2 text-green-600">✔</span> Live NOI, DSCR & occupancy on your phone</li>
-        <li class="flex items-start"><span class="mr-2 text-green-600">✔</span> Day + 10 lender package <span class="font-medium">guarantee</span></li>
-        <li class="flex items-start"><span class="mr-2 text-green-600">✔</span> <span class="font-semibold">30–40% lower cost</span> than legacy outsourcers</li>
-      </ul>
-
-      <button @click="Calendly.initPopupWidget({ url: 'https://calendly.com/your-demo-link/15min' });" id="demo" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow">
-        Schedule My 15‑Min Demo →
+  <!-- Top nav -->
+  <header class="fixed w-full bg-white shadow-sm z-40">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+      <a href="#" class="font-extrabold text-indigo-700 text-lg">crebookkeeper.ai</a>
+      <button @click="mobileNav=!mobileNav" class="md:hidden focus:outline-none">
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path x-show="!mobileNav" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <path x-show="mobileNav" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
-      <p class="mt-3 text-sm text-slate-500">We send Starbucks ☕ for every demo</p>
+      <nav class="hidden md:flex space-x-8 items-center">
+        <a href="#how" class="hover:text-indigo-600">How it works</a>
+        <a href="#pricing" class="hover:text-indigo-600">Pricing</a>
+        <a href="#faq" class="hover:text-indigo-600">FAQ</a>
+        <button @click="openCalendly('https://calendly.com/kyoungd-3wd4?hide_event_type_details=1&primary_color=4f46e5')" data-cal-link class="bg-indigo-600 text-white font-semibold px-5 py-2 rounded-lg shadow">Book Demo</button>
+      </nav>
     </div>
+    <!-- Mobile menu -->
+    <nav x-show="mobileNav" x-cloak class="md:hidden bg-white border-t border-gray-100">
+      <a href="#how" @click="mobileNav=false" class="block px-6 py-4 border-b">How it works</a>
+      <a href="#pricing" @click="mobileNav=false" class="block px-6 py-4 border-b">Pricing</a>
+      <a href="#faq" @click="mobileNav=false" class="block px-6 py-4 border-b">FAQ</a>
+      <button @click="openCalendly('https://calendly.com/kyoungd-3wd4?hide_event_type_details=1&primary_color=4f46e5'); mobileNav=false" data-cal-link class="w-full text-left px-6 py-4">Book Demo</button>
+    </nav>
+  </header>
+  <div class="h-16"></div>
 
-    <!-- Dashboard mock placeholder -->
-    <div class="relative">
-      <div class="aspect-[4/3] w-full rounded-xl shadow-lg ring-1 ring-slate-200 overflow-hidden bg-white flex items-center justify-center">
-        <span class="text-slate-400">[Dashboard preview]</span>
+  <!-- HERO -->
+  <section class="max-w-7xl mx-auto px-6 pt-16 pb-32 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Close in 10 Days—Every Month</h1>
+      <p class="text-lg md:text-xl mb-6 text-slate-600">AI‑powered bookkeeping at <span class="font-semibold">70% of market cost</span>.</p>
+      <ul class="space-y-2 mb-8 text-slate-700">
+        <li>✔ Live NOI & occupancy on your phone</li>
+        <li>✔ SLA‑backed lender packs by D+10</li>
+      </ul>
+      <div class="space-x-4">
+        <button @click="openCalendly('https://calendly.com/kyoungd-3wd4?hide_event_type_details=1&primary_color=4f46e5')" id="demo" data-cal-link class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow">Schedule a 15‑Min Demo →</button>
+        <a href="#video" class="inline-block text-indigo-600 font-semibold">Watch 90‑sec overview →</a>
       </div>
     </div>
-  </header>
-
-  <!-- Social proof -->
-  <section class="bg-white py-12">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <p class="text-slate-500 text-base mb-4">Trusted by owners & operators of 1M+ sq‑ft and counting</p>
-      <div class="flex flex-wrap justify-center gap-6 opacity-80">
-        <img src="/qb-logo.svg" alt="QuickBooks logo" class="h-6"/>
-        <img src="/yardi-logo.svg" alt="Yardi logo" class="h-6"/>
-        <img src="/co-star-logo.svg" alt="Co‑Star logo" class="h-6"/>
-        <img src="/plaid-logo.svg" alt="Plaid logo" class="h-6"/>
+    <div class="relative">
+      <div class="aspect-[4/3] w-full rounded-xl shadow-lg ring-1 ring-slate-200 overflow-hidden bg-white flex items-center justify-center">
+        <span class="text-slate-400">[Dashboard wireframe]</span>
       </div>
     </div>
   </section>
 
-  <!-- Pain → Solution grid (unchanged content, lighter wording tweaks) -->
-  <section class="bg-slate-50 py-20">
+  <!-- Trust badges -->
+  <section class="bg-white py-4">
+    <div class="max-w-7xl mx-auto px-6 flex flex-wrap gap-6 items-center justify-center text-slate-500 text-sm">
+      <div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg><span>Bank‑Level TLS</span></div>
+      <div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg><span>SOC‑2 Type I (in progress)</span></div>
+      <div class="flex items-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg><span>Encrypted PII</span></div>
+    </div>
+  </section>
+
+  <!-- Pain to Solution -->
+  <section class="bg-white py-20">
     <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-12">Why CRE Owners Switch</h2>
+      <h2 class="text-3xl font-bold text-center mb-12">Why CRE Owners Switch to Us</h2>
       <div class="grid md:grid-cols-2 gap-8">
         <div class="space-y-6">
           <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Lender deadlines breathing down your neck</p></div>
-          <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Spreadsheets & email chains with CPAs</p></div>
-          <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Paying top dollar for manual data entry</p></div>
-          <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Error & fraud exposure</p></div>
+          <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Spreadsheets & email chains with your accountant</p></div>
+          <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Paying full freight for manual data entry</p></div>
+          <div class="flex items-start"><span class="text-red-500 mr-3">✖︎</span><p>Error & fraud risk</p></div>
         </div>
         <div class="space-y-6">
-          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p>SLA‑backed Day + 10 close—miss & we pay the fee</p></div>
-          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p>One live dashboard—zero email back‑and‑forth</p></div>
-          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p><strong>30–40% lower cost</strong>—automation does the grunt work</p></div>
-          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p>Benford checks & dual approvals > $50k catch anomalies</p></div>
+          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p>SLA‑backed close—lender packs in your inbox by D+10</p></div>
+          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p>One live dashboard, nightly NOI updates</p></div>
+          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p><strong>70% of market cost</strong>—automation does the grunt work</p></div>
+          <div class="flex items-start"><span class="text-green-600 mr-3">✔︎</span><p>Benford checks & dual approvals > $50k catch anomalies before they bite</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- How it works (unchanged) -->
-  <section class="py-24 bg-white">
+  <!-- How it works -->
+  <section id="how" class="py-24 bg-slate-50">
     <div class="max-w-6xl mx-auto px-6 text-center">
       <h2 class="text-3xl font-bold mb-12">How It Works</h2>
       <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-slate-50 rounded-xl shadow p-8">
+        <div class="bg-white rounded-xl shadow p-8">
           <div class="text-4xl mb-4">📂</div>
           <h3 class="font-semibold mb-2">Import Your Books</h3>
-          <p class="text-slate-600">We migrate history from QuickBooks or Yardi—no setup fees.</p>
+          <p class="text-slate-600">We migrate history from QuickBooks or your PM system—no setup fees.</p>
         </div>
-        <div class="bg-slate-50 rounded-xl shadow p-8">
+        <div class="bg-white rounded-xl shadow p-8">
           <div class="text-4xl mb-4">🤖</div>
-          <h3 class="font-semibold mb-2">AI Does the Heavy Lifting</h3>
-          <p class="text-slate-600">OCR, bank match, duplicate & anomaly checks—70% hands‑free.</p>
+          <h3 class="font-semibold mb-2">AI Handles Busywork</h3>
+          <p class="text-slate-600">OCR, bank matching & duplicate checks—70% hands‑free.</p>
         </div>
-        <div class="bg-slate-50 rounded-xl shadow p-8">
+        <div class="bg-white rounded-xl shadow p-8">
           <div class="text-4xl mb-4">👩‍💼</div>
-          <h3 class="font-semibold mb-2">Experts Finalise</h3>
-          <p class="text-slate-600">A U.S.‑based CRE specialist handles approvals & edge cases.</p>
+          <h3 class="font-semibold mb-2">Bookkeeper Finalises</h3>
+          <p class="text-slate-600">A U.S.‑based CRE pro deals with approvals & edge cases.</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="py-24 bg-slate-50">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12">What Early Clients Say</h2>
-      <div class="grid md:grid-cols-2 gap-8">
-        <figure class="bg-white rounded-xl shadow p-8 text-left">
-          <blockquote class="mb-4 text-slate-700 italic">“CRE Bookkeeper sliced our close time from 3 weeks to 9 days and cut costs 35%. I finally see up‑to‑date NOI on my phone.”</blockquote>
-          <figcaption class="text-slate-500 font-medium">John S. — Managing Partner, 120‑unit MF portfolio</figcaption>
-        </figure>
-        <figure class="bg-white rounded-xl shadow p-8 text-left">
-          <blockquote class="mb-4 text-slate-700 italic">“They caught a $28k double‑charge the first month. The Day + 10 guarantee lets me sleep before quarterly draws.”</blockquote>
-          <figcaption class="text-slate-500 font-medium">Priya K. — CFO, Industrial REIT</figcaption>
-        </figure>
       </div>
     </div>
   </section>
 
   <!-- Pricing & Guarantee -->
-  <section class="py-24 bg-white">
+  <section id="pricing" class="py-24 bg-white">
     <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-6">Simple Pricing</h2>
-      <p class="text-xl mb-8">Founding‑client discount: <strong>40% off for 3 months</strong>, then 30% below market. Month‑to‑month contract.</p>
-      <p class="text-lg font-medium mb-12">Day + 10 Guarantee: Missed lender deadline? <span class="underline">We pay the late fee.</span></p>
-      <button @click="Calendly.initPopupWidget({ url: 'https://calendly.com/your-demo-link/15min' });" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-4 rounded-lg shadow">
-        Book My Demo Now →
-      </button>
+      <h2 class="text-3xl font-bold mb-6">Simple Pricing. No Surprises.</h2>
+      <p class="text-xl mb-8">Founding‑client discount: <strong>first 3 months at 60%</strong> of market, then 70%. Month‑to‑month contract.</p>
+      <p class="text-lg font-medium mb-12">No‑Headache Guarantee: Missed lender deadline? <span class="underline" x-tooltip="We pay any lender late fee if we miss D+10">We pay the late fee.</span></p>
+      <button @click="openCalendly('https://calendly.com/kyoungd-3wd4?hide_event_type_details=1&primary_color=4f46e5')" data-cal-link class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-4 rounded-lg shadow">Book My 15‑Min Demo</button>
     </div>
   </section>
 
-  <!-- FAQ (same component) -->
-  <section class="py-24 bg-slate-50" x-data="{ open: null, faqs: [
-    { q: 'How much will I actually save?', a: 'We bill a straight 30% below your current outsourced bookkeeping invoice—no hidden fees.' },
-    { q: 'Who does my books—AI or a human?', a: 'Both. Our platform automates ~70% of keystrokes; a U.S.‑based CRE bookkeeper handles approvals & edge‑cases.' },
-    { q: 'Can you guarantee lender packages on time?', a: 'Yes. We commit to Day + 10 close; if we miss, we pay any lender late fees—written into the contract.' },
-    { q: 'What does the dashboard show?', a: 'Live NOI, occupancy, DSCR, escrow balances, and anomaly flags—updated nightly across every entity you own.' },
-    { q: 'How do you stop AI hallucinations?', a: 'All numbers are pulled directly from QuickBooks/Yardi seconds before the answer, with Benford checks and source‑linked audit trails.' },
-    { q: 'Is my data secure?', a: 'Bank‑level TLS, tokenised PII, and a full audit trail that links every number back to the original bank feed or invoice.' },
-    { q: 'Do I lose control over approvals?', a: 'No. Bills > $50k require dual approvals in Slack; you can hold or override any payment with one click.' },
-    { q: 'How long to onboard?', a: 'We import history and go live within 2 weeks; you see dashboard data after the first nightly sync.' }
-  ] }">
+  <!-- FAQ -->
+  <section id="faq" class="py-24 bg-slate-50" x-data="{open:null,faqs:[
+    {q:'How much will I actually save?',a:'A straight 30% off your current outsourced bookkeeping bill—no hidden setup fees.'},
+    {q:'Who’s doing my books—AI or a human?',a:'Both: our platform automates ~70% of keystrokes; a named, U.S.-based CRE bookkeeper handles approvals and edge‑cases.'},
+    {q:'Can you guarantee lender packages on time?',a:'Yes. We commit to D+10 close; if we miss, we pay any lender late fees—written into the contract.'},
+    {q:'What does the dashboard show me?',a:'Live NOI, occupancy, DSCR, escrow balances, and anomaly flags—updated nightly across every entity you own.'},
+    {q:'Is my data secure?',a:'Bank-level TLS, tokenised PII, and a full audit trail that links every number back to the original bank feed or invoice image.'},
+    {q:'How long to get up and running?',a:'We import history and go live in 2–3 weeks; you start seeing dashboard data after the first nightly sync.'}
+  ]}">
     <div class="max-w-4xl mx-auto px-6">
-      <h2 class="text-3xl font-bold text-center mb-12">FAQ</h2>
-      <template x-for="(faq, index) in faqs" :key="index">
+      <h2 class="text-3xl font-bold text-center mb-12">Quick‑Hit FAQ</h2>
+      <template x-for="(faq,index) in faqs" :key="index">
         <div class="border-t first:border-t-0 border-slate-200 py-6">
-          <button @click="open === index ? open = null : open = index" class="w-full flex justify-between items-center text-left">
+          <button @click="open===index?open=null:open=index" class="w-full flex justify-between items-center text-left">
             <span class="font-medium text-lg" x-text="faq.q"></span>
-            <svg :class="{ 'rotate-45': open === index }" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"/></svg>
+            <svg :class="{'rotate-45':open===index}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m7-7H5"/></svg>
           </button>
-          <div x-show="open === index" x-collapse class="mt-4 text-slate-600" x-text="faq.a"></div>
+          <div x-show="open===index" x-collapse class="mt-4 text-slate-600" x-text="faq.a"></div>
         </div>
       </template>
     </div>
@@ -179,20 +168,27 @@
   <!-- Final CTA -->
   <footer class="bg-indigo-600 text-white py-16">
     <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-4">Ready to See Your Numbers Flow?</h2>
-      <p class="mb-8 text-lg">A 15‑minute Zoom screenshare lets you watch your own data populate the dashboard.</p>
-      <button @click="Calendly.initPopupWidget({ url: 'https://calendly.com/your-demo-link/15min' });" class="bg-white text-indigo-700 font-semibold px-10 py-4 rounded-lg shadow">
-        Schedule Demo →
-      </button>
+      <h2 class="text-3xl font-bold mb-4">See Your Numbers Flow – Risk‑Free</h2>
+      <p class="mb-8 text-lg">A 15‑minute Zoom is all it takes to watch your data populate the dashboard.</p>
+      <button @click="openCalendly('https://calendly.com/kyoungd-3wd4?hide_event_type_details=1&primary_color=4f46e5')" data-cal-link class="bg-white text-indigo-700 font-semibold px-10 py-4 rounded-lg shadow">Schedule Demo →</button>
     </div>
   </footer>
 
-  <!-- Alpine.js init (no extra logic needed) -->
-  <script>
-    /* FAQ component setup is inline in x-data */
-  </script>
+  <!-- Lead magnet modal -->
+  <div x-show="leadModal" x-cloak x-transition.opacity class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div @click.away="leadModal=false" class="bg-white rounded-xl max-w-md w-full p-8 space-y-6">
+      <h3 class="text-2xl font-bold">Get the 10‑Day Close Checklist</h3>
+      <p class="text-slate-600">Steal the 6‑step SOP we use to hit D+10—yours free.</p>
+      <form action="https://your-esp-endpoint" method="POST" class="space-y-4" @submit.once="plausible && plausible('leadmagnet_optin')">
+        <input type="hidden" name="tag" value="lead_magnet">
+        <input type="email" name="email" required placeholder="Work email" autocomplete="email" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg w-full">Send me the PDF →</button>
+      </form>
+      <button class="absolute top-2 right-2 text-slate-400" @click="leadModal=false">✕</button>
+    </div>
+  </div>
 
-  <!-- Plausible analytics -->
+  <!-- Plausible -->
   <script defer data-domain="crebookkeeper.ai" src="https://plausible.io/js/script.js"></script>
 </body>
 </html>
